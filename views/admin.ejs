@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ADMIN DASHBOARD - ระบบหลังบ้านจัดการร้าน</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <style>
+    body { font-family: 'Prompt', sans-serif; background-color: #F4F6F9; }
+    .sidebar-header { background: #1A1A1A; color: #E5BA73; padding: 20px; }
+    .card-dashboard { border: none; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+    .table-custom { border-radius: 12px; overflow: hidden; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-dark bg-dark sticky-top shadow-sm">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand fw-bold text-warning" href="/admin"><i class="bi bi-shield-lock-fill me-2"></i>ADMIN MANAGEMENT PANEL</a>
+      <div>
+        <a href="/" class="btn btn-outline-light btn-sm me-2 rounded-pill"><i class="bi bi-globe"></i> หน้าหลักร้าน</a>
+        <a href="/logout" class="btn btn-danger btn-sm rounded-pill"><i class="bi bi-box-arrow-right"></i> ออกจากระบบ</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container my-4">
+    <!-- Stat Cards Summary -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-6">
+        <div class="card card-dashboard bg-white p-3 border-start border-primary border-4">
+          <div class="d-flex align-items-center">
+            <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-3 me-3"><i class="bi bi-journal-text fs-2"></i></div>
+            <div>
+              <span class="text-muted small">จำนวนชุดทั้งหมดในคลัง</span>
+              <h3 class="fw-bold mb-0"><%= dresses.length %> ชุด</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card card-dashboard bg-white p-3 border-start border-success border-4">
+          <div class="d-flex align-items-center">
+            <div class="p-3 bg-success bg-opacity-10 text-success rounded-3 me-3"><i class="bi bi-cart-check fs-2"></i></div>
+            <div>
+              <span class="text-muted small">รายการสั่งเช่าทั้งหมด</span>
+              <h3 class="fw-bold mb-0"><%= rentals.length %> รายการ</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Add Dress -->
+    <div class="card card-dashboard p-4 mb-5 bg-white">
+      <h4 class="fw-bold text-dark mb-4"><i class="bi bi-plus-circle-fill me-2 text-primary"></i>เพิ่มชุดใหม่เข้าคลังสินค้า</h4>
+      <form action="/admin/add-dress" method="POST" enctype="multipart/form-data">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label small fw-bold">ชื่อชุด</label>
+            <input type="text" name="name" class="form-control" placeholder="เช่น ชุดราตรีเกาะอกสีแดง" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label small fw-bold">ประเภทชุด</label>
+            <input type="text" name="category" class="form-control" placeholder="เช่น ชุดราตรี / ชุดไทย" required>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small fw-bold">โทนสี</label>
+            <input type="text" name="color" class="form-control" placeholder="เช่น แดง/ทอง">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small fw-bold">ขนาด (Size)</label>
+            <input type="text" name="size" class="form-control" placeholder="S, M, L, XL">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-bold">ราคาเช่าต่อวัน (บาท)</label>
+            <input type="number" name="price" class="form-control" placeholder="เช่น 500" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-bold">รูปภาพชุด</label>
+            <input type="file" name="image" class="form-control" required>
+          </div>
+          <div class="col-12">
+            <label class="form-label small fw-bold">รายละเอียดเพิ่มเติม</label>
+            <textarea name="detail" class="form-control" rows="2" placeholder="รายละเอียดเนื้อผ้าหรือเครื่องประดับที่รวมในชุด"></textarea>
+          </div>
+        </div>
+        <button class="btn btn-primary mt-4 px-4 py-2 rounded-3 fw-bold"><i class="bi bi-save me-1"></i> บันทึกข้อมูลชุด</button>
+      </form>
+    </div>
+
+    <!-- Dress Inventory Table -->
+    <h4 class="fw-bold text-dark mb-3"><i class="bi bi-box-seam me-2"></i>รายการชุดในคลัง</h4>
+    <div class="table-responsive bg-white p-3 rounded-4 shadow-sm mb-5">
+      <table class="table table-hover align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>รูปภาพ</th>
+            <th>ชื่อชุด</th>
+            <th>หมวดหมู่</th>
+            <th>ขนาด/สี</th>
+            <th>ราคา/วัน</th>
+            <th>สถานะปัจจุบัน</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% dresses.forEach(d => { %>
+            <tr>
+              <td><img src="/uploads/<%= d.image %>" style="width: 50px; height: 50px; object-fit: cover;" class="rounded-3 shadow-sm" onerror="this.src='https://via.placeholder.com/50'"></td>
+              <td class="fw-bold"><%= d.name %></td>
+              <td><%= d.category %></td>
+              <td><span class="badge bg-light text-dark border"><%= d.size %> / <%= d.color %></span></td>
+              <td class="fw-bold text-primary">฿<%= d.price.toLocaleString() %></td>
+              <td><span class="badge <%= d.status === 'ว่าง' ? 'bg-success' : 'bg-danger' %>"><%= d.status %></span></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</body>
+</html>
